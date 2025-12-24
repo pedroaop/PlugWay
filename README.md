@@ -18,8 +18,10 @@
 - [Uso](#-uso)
 - [Arquitetura](#-arquitetura)
 - [Estrutura do Projeto](#-estrutura-do-projeto)
+- [Documentação Técnica](#-documentação-técnica)
 - [Desenvolvimento](#-desenvolvimento)
 - [Testes](#-testes)
+- [Roadmap](#-roadmap)
 - [Contribuindo](#-contribuindo)
 - [Licença](#-licença)
 
@@ -30,78 +32,118 @@
 ### Principais Características
 
 - **Extract (Extração)**: Consulta dados de bancos de dados relacionais (Firebird, MySQL, PostgreSQL, SQL Server)
-- **Transform (Transformação)**: Aplica transformações nos dados usando padrões EIP
-- **Load (Carregamento)**: Envia dados transformados para APIs REST
+- **Transform (Transformação)**: Aplica transformações nos dados usando padrões EIP com pipeline configurável
+- **Load (Carregamento)**: Envia dados transformados para APIs REST com retry automático e tratamento de erros
 - **Interface Gráfica**: Interface desktop moderna e intuitiva desenvolvida com JavaFX
-- **Agendamento**: Execução automática de jobs através de agendamento configurável
-- **Monitoramento**: Acompanhamento em tempo real de execuções e métricas
+- **Agendamento**: Execução automática de jobs através de agendamento configurável com Quartz Scheduler
+- **Monitoramento**: Acompanhamento em tempo real de execuções, métricas e auditoria
 - **Logs**: Sistema completo de logging para auditoria e debugging
 
 ## ✨ Funcionalidades
 
-### 🔌 Gerenciamento de Conexões
+### 🔌 Gerenciamento de Conexões de Banco de Dados
 
-- Configuração de múltiplas conexões de banco de dados
-- Suporte para Firebird, MySQL, PostgreSQL e SQL Server
-- Pool de conexões configurável (HikariCP)
+- Configuração de múltiplas conexões simultâneas
+- Suporte para **Firebird**, **MySQL**, **PostgreSQL** e **SQL Server**
+- Pool de conexões configurável usando HikariCP
 - Teste de conectividade em tempo real
-- Gerenciamento de credenciais seguro
+- Validação automática de configurações
+- Gerenciamento seguro de credenciais
+- Reutilização de conexões para melhor performance
 
-### 📡 Gerenciamento de APIs
+### 📡 Gerenciamento de APIs REST
 
-- Configuração de endpoints REST
-- Suporte para autenticação (Bearer Token, Basic Auth, API Key)
+- Configuração de múltiplos endpoints REST
+- Suporte para métodos HTTP: **POST**, **PUT**, **PATCH**, **GET**, **DELETE**
+- Autenticação flexível:
+  - Bearer Token
+  - Basic Authentication
+  - API Key (com header customizável)
+  - Sem autenticação
+- Headers HTTP customizáveis
 - Configuração de timeouts e retries
-- Validação de conectividade
+- Backoff exponencial configurável
+- Validação de conectividade antes do uso
 
 ### ⚙️ Gerenciamento de Jobs ETL
 
-- Criação e edição de jobs ETL
-- Configuração de queries SQL para extração
-- Definição de transformações de dados
-- Configuração de endpoints de destino
-- Validação de configurações antes da execução
+- Criação e edição de jobs ETL através de interface gráfica
+- Configuração completa de:
+  - **Origem**: Seleção de conexão de banco e query SQL
+  - **Transformação**: Pipeline configurável de transformações
+  - **Destino**: Seleção de API REST e configuração de endpoint
+- Parâmetros dinâmicos em queries SQL
+- Validação completa de configurações antes da execução
 - Execução manual ou agendada
+- Habilitar/desabilitar jobs individualmente
+- Visualização de histórico de execuções
 
-### 🔄 Transformações
+### 🔄 Transformações de Dados
 
-- Normalização de dados
-- Tradução de formato (Database → JSON)
-- Validação de schema JSON
-- Enriquecimento de conteúdo
-- Pipeline de transformações configurável
+O pipeline de transformação suporta:
 
-### 📅 Agendamento
+- **Normalizer**: Normalização de dados
+  - Normalização de datas para formato ISO 8601
+  - Normalização de valores decimais
+  - Normalização de nomes de colunas (snake_case/camelCase)
+  - Tratamento configurável de valores nulos
 
-- Agendamento de execução de jobs
-- Suporte a expressões Cron
+- **ContentEnricher**: Enriquecimento de conteúdo
+  - Adição de metadata (timestamp, jobId, etc.)
+  - Adição de estatísticas (contagem de registros)
+  - Configuração opcional por job
+
+- **DatabaseToJsonTranslator**: Conversão para JSON
+  - Conversão automática de ResultSet para JSON
+  - Formatação opcional (pretty print)
+  - Preservação de tipos de dados
+
+- **JsonSchemaValidator**: Validação de schema JSON (preparado para uso futuro)
+
+### 📅 Agendamento de Jobs
+
+- Agendamento baseado em expressões Cron
+- Interface gráfica para configuração de agendamentos
+- Pausar/retomar jobs agendados
+- Visualização do próximo horário de execução
 - Execução única ou recorrente
-- Controle de jobs agendados (ativar/desativar)
+- Integração com Quartz Scheduler
+- Gerenciamento de múltiplos jobs agendados simultaneamente
 
-### 📊 Monitoramento
+### 📊 Monitoramento e Auditoria
 
-- Dashboard em tempo real
-- Métricas de execução (tempo, registros processados)
-- Histórico de execuções
-- Status de jobs (sucesso, falha, em execução)
-- Visualização de mensagens interceptadas
+- **Dashboard em tempo real** com métricas de execução
+- **Métricas coletadas**:
+  - Duração de cada etapa (Extract, Transform, Load)
+  - Número de registros processados
+  - Taxa de sucesso/falha
+  - Status detalhado de cada execução
+- **MessageStore**: Armazenamento de todas as mensagens interceptadas
+- **Visualização de mensagens** em cada etapa do pipeline
+- **Histórico completo** de execuções
+- **Dead Letter Channel**: Mensagens com falha são armazenadas para reprocessamento
 
-### 📝 Logs
+### 📝 Sistema de Logs
 
 - Visualização de logs em tempo real
-- Filtros por nível (INFO, WARN, ERROR)
+- Filtros por nível (INFO, WARN, ERROR, DEBUG)
+- Logs persistidos em arquivo
+- Rotação automática de logs
 - Exportação de logs
-- Histórico completo de execuções
+- Terminal integrado na interface gráfica
 
 ### 🏗️ Padrões EIP Implementados
 
-- **Pipeline**: Encadeamento de transformações
-- **Wire Tap**: Interceptação de mensagens para monitoramento
-- **Control Bus**: Gerenciamento centralizado de mensagens
-- **Message Transformer**: Transformação de mensagens
-- **Dead Letter Channel**: Tratamento de mensagens com falha
-- **Retry Handler**: Re-tentativas automáticas
-- **Content Enricher**: Enriquecimento de dados
+A aplicação implementa os seguintes padrões Enterprise Integration Patterns:
+
+- **Pipeline (Pipes-and-Filters)**: Encadeamento sequencial de transformações
+- **Wire Tap**: Interceptação de mensagens para monitoramento e auditoria
+- **Control Bus**: Gerenciamento centralizado de mensagens e controle
+- **Message Transformer**: Transformação de mensagens entre formatos
+- **Dead Letter Channel**: Tratamento de mensagens com falha definitiva
+- **Retry Handler**: Re-tentativas automáticas com backoff configurável
+- **Content Enricher**: Enriquecimento de dados com informações adicionais
+- **Messaging Gateway**: Interface simplificada para execução de jobs
 
 ## 🛠️ Tecnologias
 
@@ -113,7 +155,7 @@
 
 ### Banco de Dados
 
-- **HikariCP 5.0.1**: Pool de conexões
+- **HikariCP 5.0.1**: Pool de conexões de alta performance
 - **Jaybird 4.0.9**: Driver Firebird
 - **MySQL Connector 8.1.0**: Driver MySQL
 - **PostgreSQL 42.6.0**: Driver PostgreSQL
@@ -121,9 +163,14 @@
 
 ### Integração e Processamento
 
-- **Jackson 2.15.2**: Processamento JSON
-- **Quartz 2.3.2**: Agendamento de tarefas
-- **Typesafe Config 1.4.3**: Gerenciamento de configurações
+- **Jackson 2.15.2**: Processamento JSON (serialização/deserialização)
+- **Quartz 2.3.2**: Agendamento de tarefas com expressões Cron
+- **Typesafe Config 1.4.3**: Gerenciamento de configurações (HOCON)
+
+### Interface Gráfica
+
+- **Ikonli 12.3.1**: Biblioteca de ícones (FontAwesome 5)
+- **JavaFX FXML**: Definição de layouts
 
 ### Logging
 
@@ -132,12 +179,12 @@
 
 ### Validação
 
-- **Jakarta Validation 3.0.2**: Validação de dados
+- **Jakarta Validation 3.0.2**: API de validação de dados
 - **Hibernate Validator 8.0.0**: Implementação de validação
 
 ### Testes
 
-- **JUnit 5.10.0**: Framework de testes
+- **JUnit 5.10.0**: Framework de testes unitários
 - **Mockito 5.5.0**: Framework de mock
 - **TestFX 4.0.18**: Testes de interface gráfica
 
@@ -196,8 +243,8 @@ mvn clean compile exec:java
 
 A aplicação utiliza dois formatos de configuração:
 
-1. **application.properties**: Propriedades simples
-2. **application.conf**: Configuração HOCON (Typesafe Config)
+1. **application.properties**: Propriedades simples do sistema
+2. **application.conf**: Configuração HOCON (Typesafe Config) para configurações mais complexas
 
 ### Configurações Principais
 
@@ -218,6 +265,7 @@ database.pool.minSize=2
 database.pool.maxSize=10
 database.pool.connectionTimeout=30000
 database.pool.idleTimeout=600000
+database.pool.maxLifetime=1800000
 ```
 
 #### API REST
@@ -235,72 +283,149 @@ scheduler.enabled=true
 scheduler.threadPoolSize=5
 ```
 
-### Diretórios
+### Diretórios Criados Automaticamente
 
 A aplicação cria os seguintes diretórios automaticamente:
 
 - `config/`: Configurações de jobs e conexões
-- `config/jobs/`: Definições de jobs ETL
+  - `config/jobs.json`: Definições de jobs ETL
+  - `config/connections.json`: Configurações de conexões de banco
+  - `config/apis.json`: Configurações de APIs REST
 - `logs/`: Arquivos de log
+  - `logs/etl-application.log`: Log principal
 - `data/`: Dados temporários e cache
-- `data/message-store/`: Armazenamento de mensagens para auditoria
+  - `data/message-store/`: Armazenamento de mensagens interceptadas (auditoria)
+  - `data/dead-letter/`: Mensagens com falha definitiva
 
 ## 💻 Uso
 
 ### Primeiros Passos
 
-1. **Iniciar a Aplicação**
-   - Execute o JAR ou use o Maven para iniciar
-   - A interface gráfica será exibida
+#### 1. Iniciar a Aplicação
 
-2. **Configurar Conexão de Banco de Dados**
-   - Acesse o menu "Conexões" → "Gerenciar Conexões DB"
-   - Clique em "Nova Conexão"
-   - Preencha os dados de conexão (tipo, host, porta, banco, usuário, senha)
-   - Teste a conexão antes de salvar
+Execute o JAR ou use o Maven para iniciar. A interface gráfica será exibida com um menu principal.
 
-3. **Configurar API de Destino**
-   - Acesse o menu "Conexões" → "Gerenciar APIs"
-   - Clique em "Nova API"
-   - Configure a URL base, método HTTP e autenticação
-   - Teste a conectividade
+#### 2. Configurar Conexão de Banco de Dados
 
-4. **Criar um Job ETL**
-   - Acesse "Jobs" → "Novo Job"
-   - Configure:
-     - **Origem**: Selecione a conexão de banco e informe a query SQL
-     - **Transformação**: Configure as transformações necessárias
-     - **Destino**: Selecione a API de destino e configure o endpoint
-   - Valide o job
-   - Salve o job
+1. Acesse o menu **"Conexões"** → **"Bancos de Dados"**
+2. Clique em **"Nova Conexão"**
+3. Preencha os dados de conexão:
+   - Nome da conexão
+   - Tipo de banco (Firebird, MySQL, PostgreSQL, SQL Server)
+   - Host e porta
+   - Nome do banco de dados
+   - Usuário e senha
+4. Clique em **"Testar Conexão"** para validar
+5. Salve a conexão
 
-5. **Executar um Job**
-   - Na lista de jobs, selecione o job desejado
-   - Clique em "Executar"
-   - Acompanhe o progresso no painel de monitoramento
+#### 3. Configurar API de Destino
 
-6. **Agendar um Job**
-   - Acesse "Jobs" → "Agendamento"
-   - Selecione o job
-   - Configure a expressão Cron ou horário
-   - Ative o agendamento
+1. Acesse o menu **"Conexões"** → **"APIs"**
+2. Clique em **"Nova API"**
+3. Configure:
+   - Nome da API
+   - URL base (ex: `https://api.exemplo.com`)
+   - Endpoint (ex: `/v1/dados`)
+   - Método HTTP (POST, PUT, PATCH, etc.)
+   - Tipo de autenticação e credenciais
+   - Headers customizados (se necessário)
+   - Timeout e configurações de retry
+4. Clique em **"Testar Conexão"** para validar
+5. Salve a API
+
+#### 4. Criar um Job ETL
+
+1. Acesse o menu **"Jobs"** → **"Gerenciar Jobs"**
+2. Clique em **"Novo Job"**
+3. Preencha as informações básicas:
+   - ID do job (único)
+   - Nome descritivo
+   - Descrição (opcional)
+4. Configure a **Origem**:
+   - Selecione a conexão de banco configurada
+   - Informe a query SQL para extração
+   - Configure parâmetros se necessário (opcional)
+5. Configure as **Transformações**:
+   - Normalização de dados (ativo por padrão)
+   - Enriquecimento de conteúdo (opcional)
+   - Formatação JSON (pretty print opcional)
+6. Configure o **Destino**:
+   - Selecione a API configurada
+   - O endpoint será usado da configuração da API
+7. Clique em **"Validar"** para verificar a configuração
+8. Salve o job
+
+#### 5. Executar um Job
+
+1. Na lista de jobs, selecione o job desejado
+2. Clique em **"Executar Job"**
+3. Acompanhe o progresso na interface
+4. Visualize o resultado (sucesso ou erro com detalhes)
+
+#### 6. Agendar um Job
+
+1. Acesse o menu **"Jobs"** → **"Agendamento"**
+2. Selecione o job que deseja agendar
+3. Configure a expressão Cron (ex: `0 0 2 * * ?` para executar diariamente às 2h)
+4. Ative o agendamento
+5. Visualize o próximo horário de execução
 
 ### Exemplo de Job ETL
 
+#### Query de Extração (Origem)
+
 ```sql
--- Query de Extração (Origem)
 SELECT 
     id,
     nome,
     email,
-    data_cadastro
+    data_cadastro,
+    status
 FROM usuarios
 WHERE data_cadastro >= CURRENT_DATE - INTERVAL '7' DAY
+  AND status = 'ATIVO'
+ORDER BY data_cadastro DESC
 ```
 
-**Transformação**: Converter para JSON e normalizar campos
+#### Transformação Configurada
 
-**Destino**: POST para `https://api.exemplo.com/v1/usuarios`
+- ✅ Normalização de datas para ISO 8601
+- ✅ Normalização de nomes de colunas (snake_case)
+- ✅ Enriquecimento com metadata
+- ✅ Conversão para JSON formatado
+
+#### Destino
+
+- **URL**: `https://api.exemplo.com/v1/usuarios`
+- **Método**: POST
+- **Autenticação**: Bearer Token
+- **Headers**: `Content-Type: application/json`
+
+#### Resultado JSON Enviado
+
+```json
+{
+  "metadata": {
+    "jobId": "job-001",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "recordCount": 150
+  },
+  "data": [
+    {
+      "id": 1,
+      "nome": "João Silva",
+      "email": "joao@exemplo.com",
+      "dataCadastro": "2024-01-10T08:00:00Z",
+      "status": "ATIVO"
+    },
+    ...
+  ],
+  "statistics": {
+    "totalRecords": 150,
+    "processingTime": 1250
+  }
+}
+```
 
 ## 🏛️ Arquitetura
 
@@ -310,33 +435,58 @@ A aplicação segue uma arquitetura em camadas:
 
 ```
 ┌─────────────────────────────────────┐
-│         Interface Gráfica           │
-│          (JavaFX UI)                │
+│      Interface Gráfica (JavaFX)     │
+│  - MainController                   │
+│  - JobManagerController             │
+│  - ConnectionManagerController      │
+│  - ApiManagerController             │
+│  - SchedulerController              │
+│  - MonitoringController             │
+│  - LogsController                   │
 └─────────────────────────────────────┘
               │
 ┌─────────────────────────────────────┐
 │         Camada de Serviços          │
-│  - Orchestrator                     │
-│  - Transform                        │
-│  - Load                             │
-│  - Scheduler                        │
-│  - Monitoring                       │
+│  - MessagingGateway                 │
+│  - EtlOrchestrator                  │
+│  - ExtractService                   │
+│  - TransformService                 │
+│  - LoadService                      │
+│  - SchedulerService                 │
+│  - JobConfigService                 │
+│  - ConnectionConfigService          │
+│  - ApiConfigService                 │
 └─────────────────────────────────────┘
               │
 ┌─────────────────────────────────────┐
-│      Padrões EIP (Enterprise        │
-│      Integration Patterns)          │
-│  - Pipeline                         │
-│  - Wire Tap                         │
-│  - Control Bus                      │
-│  - Message Transformer              │
+│   Padrões EIP (Enterprise           │
+│   Integration Patterns)             │
+│  - EtlPipeline                      │
+│  - WireTap                          │
+│  - ControlBus                       │
+│  - MessageTransformer               │
+│  - DeadLetterChannel                │
+│  - RetryHandler                     │
+│  - Normalizer                       │
+│  - ContentEnricher                  │
+│  - DatabaseToJsonTranslator         │
 └─────────────────────────────────────┘
               │
 ┌─────────────────────────────────────┐
-│      Camada de Acesso a Dados       │
-│  - Extract Service                  │
-│  - Connection Manager               │
-│  - Query Executor                   │
+│   Camada de Acesso a Dados          │
+│  - ConnectionManager                │
+│  - QueryExecutor                    │
+│  - DatabaseEndpoint                 │
+│  - RestApiEndpoint                  │
+│  - RestApiClient                    │
+└─────────────────────────────────────┘
+              │
+┌─────────────────────────────────────┐
+│   Persistência e Monitoramento      │
+│  - MessageStore                     │
+│  - ExecutionMetrics                 │
+│  - LogAppender                      │
+│  - ConfigManager                    │
 └─────────────────────────────────────┘
 ```
 
@@ -348,11 +498,19 @@ A aplicação segue uma arquitetura em camadas:
 │   (DB)   │     │   (Pipeline) │     │  (REST API) │     │  (Dest)  │
 └──────────┘     └──────────────┘     └─────────────┘     └──────────┘
       │                  │                     │
+      │                  │                     │
       ▼                  ▼                     ▼
 ┌─────────────────────────────────────────────────────────┐
-│              Monitoramento e Logging                    │
+│         Monitoramento e Auditoria                       │
+│  - WireTap intercepta todas as mensagens                │
+│  - ExecutionMetrics coleta métricas                     │
+│  - MessageStore armazena para auditoria                 │
+│  - DeadLetterChannel para mensagens falhadas            │
+│  - LogAppender registra todos os eventos                │
 └─────────────────────────────────────────────────────────┘
 ```
+
+Para mais detalhes sobre a arquitetura, consulte o arquivo [MERMAID.md](MERMAID.md) com diagramas detalhados.
 
 ## 📁 Estrutura do Projeto
 
@@ -361,32 +519,112 @@ plugway/
 ├── src/
 │   ├── main/
 │   │   ├── java/com/plugway/etl/
-│   │   │   ├── config/          # Gerenciamento de configurações
-│   │   │   ├── dao/             # Acesso a dados (Extract)
-│   │   │   ├── eip/             # Padrões Enterprise Integration Patterns
-│   │   │   ├── model/           # Modelos de dados
-│   │   │   ├── service/         # Serviços de negócio
-│   │   │   │   ├── load/        # Serviço de carga (Load)
-│   │   │   │   ├── monitoring/  # Monitoramento
-│   │   │   │   ├── orchestrator/# Orquestração ETL
-│   │   │   │   ├── scheduler/   # Agendamento
-│   │   │   │   └── transform/   # Transformações
-│   │   │   ├── ui/              # Interface gráfica (JavaFX)
-│   │   │   └── util/            # Utilitários
+│   │   │   ├── config/              # Gerenciamento de configurações
+│   │   │   │   ├── ApplicationProperties.java
+│   │   │   │   └── ConfigManager.java
+│   │   │   ├── dao/                 # Acesso a dados (Extract)
+│   │   │   │   ├── ConnectionManager.java
+│   │   │   │   ├── DatabaseConnectionFactory.java
+│   │   │   │   ├── DatabaseEndpoint.java
+│   │   │   │   ├── ExtractService.java
+│   │   │   │   └── QueryExecutor.java
+│   │   │   ├── eip/                 # Padrões Enterprise Integration Patterns
+│   │   │   │   ├── ControlBus.java
+│   │   │   │   ├── EtlPipeline.java
+│   │   │   │   ├── MessageEndpoint.java
+│   │   │   │   ├── MessageInterceptor.java
+│   │   │   │   ├── MessageTransformer.java
+│   │   │   │   └── WireTap.java
+│   │   │   ├── model/               # Modelos de dados
+│   │   │   │   ├── ApiConfig.java
+│   │   │   │   ├── AuthType.java
+│   │   │   │   ├── DatabaseConfig.java
+│   │   │   │   ├── DatabaseType.java
+│   │   │   │   ├── EtlJob.java
+│   │   │   │   ├── EtlMessage.java
+│   │   │   │   ├── JobExecutionInfo.java
+│   │   │   │   ├── JobStatus.java
+│   │   │   │   ├── MessageType.java
+│   │   │   │   └── ScheduleConfig.java
+│   │   │   ├── service/             # Serviços de negócio
+│   │   │   │   ├── ApiConfigService.java
+│   │   │   │   ├── ConnectionConfigService.java
+│   │   │   │   ├── JobConfigService.java
+│   │   │   │   ├── load/            # Serviço de carga (Load)
+│   │   │   │   │   ├── DeadLetterChannel.java
+│   │   │   │   │   ├── LoadService.java
+│   │   │   │   │   ├── RestApiClient.java
+│   │   │   │   │   ├── RestApiEndpoint.java
+│   │   │   │   │   └── RetryHandler.java
+│   │   │   │   ├── monitoring/      # Monitoramento
+│   │   │   │   │   ├── ExecutionMetrics.java
+│   │   │   │   │   ├── LogAppender.java
+│   │   │   │   │   └── MessageStore.java
+│   │   │   │   ├── orchestrator/    # Orquestração ETL
+│   │   │   │   │   ├── EtlOrchestrator.java
+│   │   │   │   │   └── MessagingGateway.java
+│   │   │   │   ├── scheduler/       # Agendamento
+│   │   │   │   │   ├── JobScheduler.java
+│   │   │   │   │   └── SchedulerService.java
+│   │   │   │   └── transform/       # Transformações
+│   │   │   │       ├── ContentEnricher.java
+│   │   │   │       ├── DatabaseToJsonTranslator.java
+│   │   │   │       ├── JsonSchemaValidator.java
+│   │   │   │       ├── Normalizer.java
+│   │   │   │       └── TransformService.java
+│   │   │   ├── ui/                  # Interface gráfica (JavaFX)
+│   │   │   │   ├── ApiManagerController.java
+│   │   │   │   ├── ConnectionManagerController.java
+│   │   │   │   ├── IconHelper.java
+│   │   │   │   ├── JobManagerController.java
+│   │   │   │   ├── LogsController.java
+│   │   │   │   ├── MainController.java
+│   │   │   │   ├── MonitoringController.java
+│   │   │   │   └── SchedulerController.java
+│   │   │   ├── util/                # Utilitários
+│   │   │   │   └── LoggerUtil.java
+│   │   │   └── Main.java            # Classe principal
 │   │   └── resources/
-│   │       ├── fxml/            # Arquivos FXML da interface
-│   │       ├── css/             # Estilos CSS
-│   │       ├── images/          # Imagens
+│   │       ├── fxml/                 # Arquivos FXML da interface
+│   │       │   ├── ApiManagerView.fxml
+│   │       │   ├── ConnectionManagerView.fxml
+│   │       │   ├── JobManagerView.fxml
+│   │       │   ├── MainView.fxml
+│   │       │   └── SchedulerView.fxml
+│   │       ├── css/                  # Estilos CSS
+│   │       │   └── application.css
+│   │       ├── images/               # Imagens
 │   │       ├── application.properties
 │   │       ├── application.conf
 │   │       └── logback.xml
-│   └── test/                    # Testes unitários e de integração
-├── config/                      # Configurações de jobs
-├── data/                        # Dados temporários
-├── logs/                        # Arquivos de log
-├── pom.xml                      # Configuração Maven
-└── README.md                    # Este arquivo
+│   └── test/                         # Testes unitários e de integração
+│       └── java/com/plugway/etl/
+│           ├── dao/
+│           ├── eip/
+│           ├── integration/
+│           └── service/
+├── config/                           # Configurações de jobs (criado em runtime)
+│   ├── jobs.json
+│   ├── connections.json
+│   └── apis.json
+├── data/                             # Dados temporários (criado em runtime)
+│   ├── message-store/
+│   └── dead-letter/
+├── logs/                             # Arquivos de log (criado em runtime)
+│   └── etl-application.log
+├── pom.xml                           # Configuração Maven
+├── README.md                         # Este arquivo
+├── ROADMAP.md                        # Roadmap de desenvolvimento
+├── MERMAID.md                        # Diagramas de arquitetura
+└── LICENSE                           # Licença Apache 2.0
 ```
+
+## 📚 Documentação Técnica
+
+Para entender melhor a arquitetura e as regras de negócio do projeto, consulte:
+
+- **[MERMAID.md](MERMAID.md)**: Diagramas detalhados da arquitetura, fluxos de execução, regras de negócio e modelos de dados usando Mermaid
+- **[ROADMAP.md](ROADMAP.md)**: Roadmap de desenvolvimento com funcionalidades planejadas
 
 ## 🔧 Desenvolvimento
 
@@ -404,6 +642,7 @@ plugway/
    - Importe o projeto como projeto Maven
    - Configure o JDK 17 como Java SDK
    - Instale plugins JavaFX (se necessário)
+   - Configure o caminho do JavaFX SDK se necessário
 
 ### Comandos Úteis
 
@@ -414,17 +653,20 @@ mvn clean compile
 # Executar testes
 mvn test
 
-# Gerar JAR executável
+# Gerar JAR executável (com todas as dependências)
 mvn clean package
 
-# Executar aplicação
+# Executar aplicação via Maven JavaFX plugin
 mvn javafx:run
 
-# Limpar e reconstruir
+# Executar aplicação via exec plugin
+mvn clean compile exec:java
+
+# Limpar e reconstruir tudo
 mvn clean install
 
-# Gerar relatório de cobertura de testes
-mvn test jacoco:report
+# Verificar dependências
+mvn dependency:tree
 ```
 
 ## 🧪 Testes
@@ -438,27 +680,38 @@ mvn test
 # Testes específicos
 mvn test -Dtest=NomeDaClasseTest
 
-# Testes com cobertura
-mvn test jacoco:report
+# Testes com detalhes
+mvn test -X
 ```
-
-### Tipos de Testes
-
-- **Testes Unitários**: Serviços e utilitários
-- **Testes de Integração**: Fluxo ETL completo
-- **Testes de Interface**: TestFX para componentes JavaFX
 
 ### Cobertura de Testes
 
 A aplicação possui testes para:
 
-- ✅ Serviços de extração (ExtractService)
-- ✅ Serviços de transformação (TransformService)
+- ✅ Serviços de extração (ExtractService, QueryExecutor)
+- ✅ Serviços de transformação (TransformService, Normalizer, DatabaseToJsonTranslator)
 - ✅ Serviços de carga (LoadService)
 - ✅ Orquestrador ETL (EtlOrchestrator)
 - ✅ Padrões EIP (Pipeline, WireTap)
-- ✅ Gerenciamento de conexões
-- ✅ Agendamento
+- ✅ Gerenciamento de conexões (ConnectionManager)
+- ✅ Agendamento (JobScheduler, SchedulerService)
+- ✅ Monitoramento (ExecutionMetrics, MessageStore)
+
+### Tipos de Testes
+
+- **Testes Unitários**: Serviços e utilitários isolados
+- **Testes de Integração**: Fluxo ETL completo end-to-end
+- **Testes de Interface**: TestFX para componentes JavaFX (preparado para uso)
+
+## 🗺️ Roadmap
+
+Consulte o arquivo [ROADMAP.md](ROADMAP.md) para ver o planejamento completo de funcionalidades futuras, incluindo:
+
+- Sistema de plugins extensível
+- Suporte a novos formatos (CSV, Excel, JSON, XML)
+- Integração com message queues (Kafka, RabbitMQ)
+- Expansão de APIs REST como fonte de dados
+- Cloud storage (S3) e protocolos FTP/SFTP
 
 ## 🤝 Contribuindo
 
@@ -474,9 +727,22 @@ Contribuições são bem-vindas! Para contribuir:
 
 - Siga as convenções Java padrão
 - Use nomes descritivos para classes e métodos
-- Documente classes e métodos públicos
+- Documente classes e métodos públicos com JavaDoc
 - Adicione testes para novas funcionalidades
-- Mantenha a cobertura de testes acima de 70%
+- Mantenha a cobertura de testes adequada
+- Siga os padrões EIP já implementados
+
+### Estrutura de Commits
+
+Use mensagens de commit descritivas:
+
+```
+feat: Adiciona suporte a novo tipo de banco
+fix: Corrige problema de pool de conexões
+docs: Atualiza documentação do README
+refactor: Refatora serviço de transformação
+test: Adiciona testes para novo componente
+```
 
 ## 📄 Licença
 
@@ -487,15 +753,16 @@ Este projeto está licenciado sob a [Apache License 2.0](LICENSE). Veja o arquiv
 Para dúvidas, problemas ou sugestões:
 
 - Abra uma [Issue](https://github.com/seu-usuario/plugway/issues)
-- Entre em contato com a equipe de desenvolvimento
+- Consulte a documentação técnica em [MERMAID.md](MERMAID.md)
+- Veja o roadmap de desenvolvimento em [ROADMAP.md](ROADMAP.md)
 
 ## 🙏 Agradecimentos
 
 - Comunidade JavaFX
 - Projeto Apache Camel (inspiração para padrões EIP)
 - Todos os contribuidores e mantenedores
+- Comunidades open source das bibliotecas utilizadas
 
 ---
 
 **Desenvolvido com ❤️ usando Java e JavaFX**
-
