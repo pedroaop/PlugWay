@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.plugway.etl.ui.ApiManagerController"
+            stylesheets="@../css/application.css">
+    
+    <top>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <Label text="Gerenciamento de APIs REST" 
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.5" style="-fx-padding: 10;">
+            <!-- Lista de APIs -->
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label text="APIs Cadastradas" style="-fx-font-weight: bold;" />
+                <TableView fx:id="apisTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Nome" prefWidth="150" />
+                        <TableColumn fx:id="urlColumn" text="URL" prefWidth="300" />
+                        <TableColumn fx:id="methodColumn" text="Método" prefWidth="80" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button fx:id="newApiButton" text="Nova API" onAction="#handleNew" />
+                </HBox>
+            </VBox>
+            
+            <!-- Formulário -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="15" style="-fx-padding: 10;">
+                    <Label text="Configuração da API" style="-fx-font-weight: bold;" />
+                    
+                    <GridPane hgap="10" vgap="10" style="-fx-padding: 10;">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="140" prefWidth="140" halignment="RIGHT" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="250" prefWidth="300" />
+                        </columnConstraints>
+                        
+                        <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="nameField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Base URL:" GridPane.columnIndex="0" GridPane.rowIndex="1" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="baseUrlField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" promptText="https://api.exemplo.com" />
+                        
+                        <Label text="Endpoint:" GridPane.columnIndex="0" GridPane.rowIndex="2" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="endpointField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" promptText="/v1/dados" />
+                        
+                        <Label text="Método:" GridPane.columnIndex="0" GridPane.rowIndex="3" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="methodComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="3" prefWidth="150" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                        
+                        <Label text="Autenticação:" GridPane.columnIndex="0" GridPane.rowIndex="5" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="authTypeComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="5" GridPane.hgrow="ALWAYS" 
+                                  minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Bearer Token:" GridPane.columnIndex="0" GridPane.rowIndex="6" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="authTokenField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="6" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="API Key:" GridPane.columnIndex="0" GridPane.rowIndex="7" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="apiKeyField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="7" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="API Key Header:" GridPane.columnIndex="0" GridPane.rowIndex="8" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="apiKeyHeaderField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="8" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" promptText="X-API-Key" />
+                        
+                        <Label text="Usuário:" GridPane.columnIndex="0" GridPane.rowIndex="9" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="usernameField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="9" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Senha:" GridPane.columnIndex="0" GridPane.rowIndex="10" 
+                               GridPane.halignment="RIGHT" />
+                        <PasswordField fx:id="passwordField" editable="true" GridPane.columnIndex="1" 
+                                       GridPane.rowIndex="10" GridPane.hgrow="ALWAYS" 
+                                       minWidth="250" prefWidth="300" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="11" />
+                        
+                        <Label text="Timeout (ms):" GridPane.columnIndex="0" GridPane.rowIndex="12" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="timeoutField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="12" prefWidth="150" minWidth="100" />
+                        
+                        <Label text="Max Retries:" GridPane.columnIndex="0" GridPane.rowIndex="13" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="maxRetriesField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="13" prefWidth="150" minWidth="100" />
+                    </GridPane>
+                    
+                    <HBox spacing="10">
+                        <Button fx:id="saveButton" text="Salvar" onAction="#handleSave" 
+                                style="-fx-background-color: #4a90e2; -fx-text-fill: white;" />
+                        <Button fx:id="deleteButton" text="Excluir" onAction="#handleDelete" 
+                                style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                        <Button fx:id="testButton" text="Testar Conexão" onAction="#handleTest" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+    
+</BorderPane>
+

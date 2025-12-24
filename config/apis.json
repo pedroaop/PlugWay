@@ -1,0 +1,16 @@
+[ {
+  "name" : "Webhook",
+  "baseUrl" : "https://rbaskets.in",
+  "endpoint" : "/plugway",
+  "method" : "POST",
+  "authType" : "NONE",
+  "authToken" : null,
+  "apiKey" : null,
+  "apiKeyHeader" : null,
+  "username" : null,
+  "password" : null,
+  "timeout" : 30000,
+  "maxRetries" : 3,
+  "retryDelay" : 1000,
+  "useExponentialBackoff" : true
+} ]

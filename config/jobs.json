@@ -1,0 +1,45 @@
+[ {
+  "id" : "job-1766584121100",
+  "name" : "CLIENTES",
+  "description" : "DADOS DE CLIENTE",
+  "enabled" : true,
+  "sourceConfig" : {
+    "name" : "FIREBIRD",
+    "type" : "FIREBIRD",
+    "host" : "localhost",
+    "port" : 3050,
+    "database" : "FINANCEiro",
+    "username" : "sysdba",
+    "password" : "masterkey"
+  },
+  "sqlQuery" : "select first 10 a.pessoas_id as id, a.pessoa_nome1 as nome from pessoas a",
+  "targetConfig" : {
+    "name" : "Webhook",
+    "baseUrl" : "https://rbaskets.in",
+    "endpoint" : "/plugway",
+    "method" : "POST",
+    "authType" : "NONE",
+    "authToken" : null,
+    "apiKey" : null,
+    "apiKeyHeader" : null,
+    "username" : null,
+    "password" : null,
+    "timeout" : 30000,
+    "maxRetries" : 3,
+    "retryDelay" : 1000,
+    "useExponentialBackoff" : true
+  },
+  "transformations" : {
+    "nullHandling" : "keep",
+    "prettyPrint" : false,
+    "normalizeDecimals" : true,
+    "normalizeDates" : true,
+    "normalizeColumnNames" : true
+  },
+  "schedule" : {
+    "enabled" : true,
+    "cronExpression" : null,
+    "timezone" : "America/Sao_Paulo",
+    "intervalSeconds" : 15
+  }
+} ]

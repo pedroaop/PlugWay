@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane stylesheets="@../css/application.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.plugway.etl.ui.MainController">
+    
+    <top>
+        <MenuBar>
+            <Menu mnemonicParsing="false" text="Arquivo">
+                <MenuItem fx:id="terminalMenuItem" mnemonicParsing="false" text="Terminal" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="clearLogsMenuItem" mnemonicParsing="false" text="Limpar Logs" onAction="#clearTerminalLogs" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="exitMenuItem" mnemonicParsing="false" text="Sair" onAction="#handleExit" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Conexões">
+                <MenuItem fx:id="databasesMenuItem" mnemonicParsing="false" text="Bancos de Dados" />
+                <MenuItem fx:id="apisMenuItem" mnemonicParsing="false" text="APIs" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Jobs">
+                <MenuItem fx:id="manageJobsMenuItem" mnemonicParsing="false" text="Gerenciar Jobs" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="executeJobsMenuItem" mnemonicParsing="false" text="Executar Jobs" onAction="#handleExecuteJob" />
+                <SeparatorMenuItem />
+                <MenuItem fx:id="schedulerMenuItem" mnemonicParsing="false" text="Agendamento" onAction="#showScheduler" />
+            </Menu>
+            <Menu mnemonicParsing="false" text="Ajuda">
+                <MenuItem fx:id="aboutMenuItem" mnemonicParsing="false" text="Sobre" onAction="#handleAbout" />
+            </Menu>
+        </MenuBar>
+    </top>
+    
+    <center>
+        <BorderPane fx:id="contentArea">
+            <center>
+                <!-- Terminal de Logs -->
+                <VBox spacing="5" style="-fx-padding: 10;">
+                    <HBox alignment="CENTER_LEFT" spacing="10" />
+                    <TextArea fx:id="terminalLogsArea" editable="false" styleClass="terminal-text-area" VBox.vgrow="ALWAYS" />
+                </VBox>
+            </center>
+        </BorderPane>
+    </center>
+    
+    <bottom>
+        <HBox spacing="10" style="-fx-padding: 10; -fx-background-color: #f0f0f0;">
+            <Label text="Status:" />
+            <Label text="Pronto" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Label text="Versão 1.0.0-SNAPSHOT" />
+        </HBox>
+    </bottom>
+    
+</BorderPane>

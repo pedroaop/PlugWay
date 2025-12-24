@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.plugway.etl.ui.ConnectionManagerController"
+            stylesheets="@../css/application.css">
+    
+    <top>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <Label text="Gerenciamento de Conexões de Banco de Dados" 
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.5" style="-fx-padding: 10;">
+            <!-- Lista de Conexões -->
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label text="Conexões Cadastradas" style="-fx-font-weight: bold;" />
+                <TableView fx:id="connectionsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Nome" prefWidth="150" />
+                        <TableColumn fx:id="typeColumn" text="Tipo" prefWidth="100" />
+                        <TableColumn fx:id="hostColumn" text="Host" prefWidth="200" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button fx:id="newConnectionButton" text="Nova Conexão" onAction="#handleNew" />
+                </HBox>
+            </VBox>
+            
+            <!-- Formulário -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="15" style="-fx-padding: 10;">
+                    <Label text="Configuração da Conexão" style="-fx-font-weight: bold;" />
+                    
+                    <GridPane hgap="10" vgap="10" style="-fx-padding: 10;">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="120" prefWidth="120" halignment="RIGHT" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="250" prefWidth="300" />
+                        </columnConstraints>
+                        
+                        <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="nameField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Tipo:" GridPane.columnIndex="0" GridPane.rowIndex="1" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="typeComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" 
+                                  minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Host:" GridPane.columnIndex="0" GridPane.rowIndex="2" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="hostField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="2" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Porta:" GridPane.columnIndex="0" GridPane.rowIndex="3" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="portField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="3" prefWidth="100" minWidth="80" />
+                        
+                        <Label text="Banco:" GridPane.columnIndex="0" GridPane.rowIndex="4" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="databaseField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="4" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Usuário:" GridPane.columnIndex="0" GridPane.rowIndex="5" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="usernameField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="5" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Senha:" GridPane.columnIndex="0" GridPane.rowIndex="6" 
+                               GridPane.halignment="RIGHT" />
+                        <PasswordField fx:id="passwordField" editable="true" GridPane.columnIndex="1" 
+                                       GridPane.rowIndex="6" GridPane.hgrow="ALWAYS" 
+                                       minWidth="250" prefWidth="300" />
+                    </GridPane>
+                    
+                    <HBox spacing="10">
+                        <Button fx:id="saveButton" text="Salvar" onAction="#handleSave" 
+                                style="-fx-background-color: #4a90e2; -fx-text-fill: white;" />
+                        <Button fx:id="deleteButton" text="Excluir" onAction="#handleDelete" 
+                                style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                        <Button fx:id="testButton" text="Testar Conexão" onAction="#handleTest" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+                
+        </SplitPane>
+    </center>
+    
+</BorderPane>
+

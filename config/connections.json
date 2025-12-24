@@ -1,0 +1,9 @@
+[ {
+  "name" : "FIREBIRD",
+  "type" : "FIREBIRD",
+  "host" : "localhost",
+  "port" : 3050,
+  "database" : "FINANCEiro",
+  "username" : "sysdba",
+  "password" : "masterkey"
+} ]

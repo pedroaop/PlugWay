@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.plugway.etl.ui.JobManagerController"
+            stylesheets="@../css/application.css">
+    
+    <top>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <Label text="Gerenciamento de Jobs ETL" 
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+        </HBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.3" style="-fx-padding: 10;">
+            <!-- Lista de Jobs -->
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label text="Jobs Cadastrados" style="-fx-font-weight: bold;" />
+                <TableView fx:id="jobsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="nameColumn" text="Nome" prefWidth="200" />
+                        <TableColumn fx:id="enabledColumn" text="Ativo" prefWidth="60" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button fx:id="newJobButton" text="Novo Job" onAction="#handleNew" />
+                </HBox>
+            </VBox>
+            
+            <!-- Formulário -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="15" style="-fx-padding: 10;">
+                    <Label text="Configuração do Job ETL" style="-fx-font-weight: bold;" />
+                    
+                    <GridPane hgap="10" vgap="10" style="-fx-padding: 10;">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="140" prefWidth="140" halignment="RIGHT" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="250" prefWidth="300" />
+                        </columnConstraints>
+                        
+                        <Label text="ID:" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="jobIdField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Nome:" GridPane.columnIndex="0" GridPane.rowIndex="1" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="jobNameField" editable="true" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="1" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Descrição:" GridPane.columnIndex="0" GridPane.rowIndex="2" 
+                               GridPane.halignment="RIGHT" />
+                        <TextArea fx:id="jobDescriptionField" editable="true" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="2" prefRowCount="3" GridPane.hgrow="ALWAYS" 
+                                  wrapText="true" minWidth="250" />
+                        
+                        <Label text="Ativo:" GridPane.columnIndex="0" GridPane.rowIndex="3" 
+                               GridPane.halignment="RIGHT" />
+                        <CheckBox fx:id="enabledCheckBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="3" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="4" />
+                        
+                        <Label text="Origem (DB):" GridPane.columnIndex="0" GridPane.rowIndex="5" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="sourceConnectionComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="5" GridPane.hgrow="ALWAYS" 
+                                  minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Query SQL:" GridPane.columnIndex="0" GridPane.rowIndex="6" 
+                               GridPane.halignment="RIGHT" />
+                        <TextArea fx:id="sqlQueryField" editable="true" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="6" prefRowCount="5" GridPane.hgrow="ALWAYS" 
+                                  wrapText="true" minWidth="250" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="7" />
+                        
+                        <Label text="Destino (API):" GridPane.columnIndex="0" GridPane.rowIndex="8" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="targetApiComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="8" GridPane.hgrow="ALWAYS" 
+                                  minWidth="250" prefWidth="300" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="9" />
+                        
+                        <Label text="Transformações:" GridPane.columnIndex="0" GridPane.rowIndex="10" 
+                               style="-fx-font-weight: bold;" GridPane.halignment="RIGHT" />
+                        
+                        <VBox spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="10">
+                            <CheckBox fx:id="normalizeDatesCheckBox" text="Normalizar Datas" />
+                            <CheckBox fx:id="normalizeDecimalsCheckBox" text="Normalizar Decimais" />
+                            <CheckBox fx:id="normalizeColumnNamesCheckBox" text="Normalizar Nomes de Colunas" />
+                        </VBox>
+                        
+                        <Label text="Tratamento de Nulos:" GridPane.columnIndex="0" GridPane.rowIndex="11" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="nullHandlingComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="11" prefWidth="150" minWidth="100" />
+                        
+                        <Label text="JSON Formatado:" GridPane.columnIndex="0" GridPane.rowIndex="12" 
+                               GridPane.halignment="RIGHT" />
+                        <CheckBox fx:id="prettyPrintCheckBox" text="JSON Formatado (Pretty Print)" 
+                                  GridPane.columnIndex="1" GridPane.rowIndex="12" />
+                    </GridPane>
+                    
+                    <HBox spacing="10">
+                        <Button fx:id="saveButton" text="Salvar" onAction="#handleSave" 
+                                style="-fx-background-color: #4a90e2; -fx-text-fill: white;" />
+                        <Button fx:id="deleteButton" text="Excluir" onAction="#handleDelete" 
+                                style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                        <Button fx:id="executeButton" text="Executar Job" onAction="#handleExecute" 
+                                style="-fx-background-color: #27ae60; -fx-text-fill: white;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+    
+</BorderPane>
+

@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.plugway.etl.ui.SchedulerController"
+            stylesheets="@../css/application.css">
+    
+    <top>
+        <HBox spacing="10" style="-fx-padding: 10;">
+            <Label text="Agendamento de Jobs ETL" 
+                   style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button text="Atualizar" onAction="#handleRefresh" />
+        </HBox>
+    </top>
+    
+    <center>
+        <SplitPane dividerPositions="0.6" style="-fx-padding: 10;">
+            <!-- Lista de Jobs Agendados -->
+            <VBox spacing="10" style="-fx-padding: 10;">
+                <Label text="Jobs Agendados" style="-fx-font-weight: bold;" />
+                <TableView fx:id="scheduledJobsTable" VBox.vgrow="ALWAYS">
+                    <columns>
+                        <TableColumn fx:id="jobIdColumn" text="Job ID" prefWidth="150" />
+                        <TableColumn fx:id="scheduleColumn" text="Agendamento" prefWidth="200" />
+                        <TableColumn fx:id="nextExecutionColumn" text="Próxima Execução" prefWidth="180" />
+                        <TableColumn fx:id="statusColumn" text="Status" prefWidth="100" />
+                    </columns>
+                </TableView>
+                <HBox spacing="10">
+                    <Button fx:id="pauseButton" text="Pausar" onAction="#handlePause" />
+                    <Button fx:id="resumeButton" text="Retomar" onAction="#handleResume" />
+                    <Button fx:id="unscheduleButton" text="Remover" onAction="#handleUnschedule" 
+                            style="-fx-background-color: #e74c3c; -fx-text-fill: white;" />
+                </HBox>
+            </VBox>
+            
+            <!-- Formulário de Agendamento -->
+            <ScrollPane fitToWidth="true">
+                <VBox spacing="15" style="-fx-padding: 10;">
+                    <Label text="Novo Agendamento" style="-fx-font-weight: bold;" />
+                    
+                    <GridPane hgap="10" vgap="10" style="-fx-padding: 10;">
+                        <columnConstraints>
+                            <ColumnConstraints minWidth="140" prefWidth="140" halignment="RIGHT" />
+                            <ColumnConstraints hgrow="ALWAYS" minWidth="250" prefWidth="300" />
+                        </columnConstraints>
+                        
+                        <Label text="Job:" GridPane.columnIndex="0" GridPane.rowIndex="0" 
+                               GridPane.halignment="RIGHT" />
+                        <ComboBox fx:id="jobComboBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="0" GridPane.hgrow="ALWAYS" 
+                                  minWidth="250" prefWidth="300" />
+                        
+                        <Label text="Habilitado:" GridPane.columnIndex="0" GridPane.rowIndex="1" 
+                               GridPane.halignment="RIGHT" />
+                        <CheckBox fx:id="scheduleEnabledCheckBox" GridPane.columnIndex="1" 
+                                  GridPane.rowIndex="1" />
+                        
+                        <Separator GridPane.columnIndex="0" GridPane.columnSpan="2" GridPane.rowIndex="2" />
+                        
+                        <Label text="Tipo:" GridPane.columnIndex="0" GridPane.rowIndex="3" 
+                               GridPane.halignment="RIGHT" />
+                        <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                            <RadioButton fx:id="cronRadioButton" text="Cron Expression" />
+                            <RadioButton fx:id="intervalRadioButton" text="Intervalo" />
+                        </HBox>
+                        
+                        <Label text="Cron Expression:" GridPane.columnIndex="0" GridPane.rowIndex="4" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="cronExpressionField" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="4" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300"
+                                   promptText="0 0 * * * ? (diariamente à meia-noite)" />
+                        <Label text="Exemplo: 0 0 * * * ? = Diariamente à meia-noite" 
+                               style="-fx-font-size: 10px; -fx-text-fill: #666;" 
+                               GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                        
+                        <Label text="Intervalo (segundos):" GridPane.columnIndex="0" GridPane.rowIndex="6" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="intervalSecondsField" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="6" prefWidth="150" minWidth="100" />
+                        
+                        <Label text="Timezone:" GridPane.columnIndex="0" GridPane.rowIndex="7" 
+                               GridPane.halignment="RIGHT" />
+                        <TextField fx:id="timezoneField" GridPane.columnIndex="1" 
+                                   GridPane.rowIndex="7" GridPane.hgrow="ALWAYS" 
+                                   minWidth="250" prefWidth="300" />
+                    </GridPane>
+                    
+                    <HBox spacing="10">
+                        <Button fx:id="scheduleButton" text="Agendar" onAction="#handleSchedule" 
+                                style="-fx-background-color: #4a90e2; -fx-text-fill: white;" />
+                        <Region HBox.hgrow="ALWAYS" />
+                    </HBox>
+                </VBox>
+            </ScrollPane>
+        </SplitPane>
+    </center>
+    
+</BorderPane>
+
